@@ -24,6 +24,7 @@ import com.facebook.airlift.bootstrap.LifeCycleManager;
 import com.facebook.airlift.log.Logger;
 import com.facebook.presto.spi.connector.Connector;
 import com.facebook.presto.spi.connector.ConnectorMetadata;
+import com.facebook.presto.spi.connector.ConnectorPageSinkProvider;
 import com.facebook.presto.spi.connector.ConnectorPlanOptimizerProvider;
 import com.facebook.presto.spi.connector.ConnectorRecordSetProvider;
 import com.facebook.presto.spi.connector.ConnectorSplitManager;
@@ -41,6 +42,7 @@ public final class TiDBConnector implements Connector {
   private final TiDBSplitManager splitManager;
   private final TiDBRecordSetProvider recordSetProvider;
   private final ConnectorPlanOptimizerProvider planOptimizerProvider;
+  private final TiDBPageSinkProvider pageSinkProvider;
 
   @Inject
   public TiDBConnector(
@@ -48,13 +50,15 @@ public final class TiDBConnector implements Connector {
       TiDBMetadata metadata,
       TiDBSplitManager splitManager,
       TiDBRecordSetProvider recordSetProvider,
-      TiDBPlanOptimizerProvider planOptimizerProvider) {
+      TiDBPlanOptimizerProvider planOptimizerProvider,
+      TiDBPageSinkProvider pageSinkProvider) {
     this.lifeCycleManager = requireNonNull(lifeCycleManager, "lifeCycleManager is null");
     this.metadata = requireNonNull(metadata, "metadata is null");
     this.splitManager = requireNonNull(splitManager, "splitManager is null");
     this.recordSetProvider = requireNonNull(recordSetProvider, "recordSetProvider is null");
     this.planOptimizerProvider = requireNonNull(planOptimizerProvider,
         "planOptimizerProvider is null");
+    this.pageSinkProvider = pageSinkProvider;
   }
 
   @Override
@@ -82,6 +86,11 @@ public final class TiDBConnector implements Connector {
   @Override
   public ConnectorPlanOptimizerProvider getConnectorPlanOptimizerProvider() {
     return planOptimizerProvider;
+  }
+
+  @Override
+  public ConnectorPageSinkProvider getPageSinkProvider() {
+    return pageSinkProvider;
   }
 
   @Override
