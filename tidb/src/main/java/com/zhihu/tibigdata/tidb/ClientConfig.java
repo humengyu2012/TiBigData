@@ -42,6 +42,8 @@ public final class ClientConfig {
   public static final String MIN_IDLE_SIZE = "tidb.minimum.idle.size";
   public static final int MIN_IDLE_SIZE_DEFAULT = 10;
 
+  public static final String PD_ADDRESSES = "tidb.pd.addresses";
+
   private String pdAddresses;
 
   private String databaseUrl;
@@ -79,6 +81,7 @@ public final class ClientConfig {
             properties.getOrDefault(MAX_POOL_SIZE, Integer.toString(MAX_POOL_SIZE_DEFAULT))),
         Integer.parseInt(
             properties.getOrDefault(MIN_IDLE_SIZE, Integer.toString(MIN_IDLE_SIZE_DEFAULT))));
+    pdAddresses = properties.get(PD_ADDRESSES);
   }
 
   public String getPdAddresses() {
