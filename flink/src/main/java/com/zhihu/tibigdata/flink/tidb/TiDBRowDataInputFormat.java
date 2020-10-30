@@ -85,7 +85,7 @@ public class TiDBRowDataInputFormat extends RichInputFormat<RowData, InputSplit>
     this.fieldTypes = fieldTypes;
     this.typeInformation = typeInformation;
     // get split
-    try (ClientSession splitSession = new ClientSession(new ClientConfig(properties))) {
+    try (ClientSession splitSession = ClientSession.create(new ClientConfig(properties), true)) {
       TableHandleInternal tableHandleInternal = new TableHandleInternal(
           UUID.randomUUID().toString(), this.databaseName, this.tableName);
       SplitManagerInternal splitManagerInternal = new SplitManagerInternal(splitSession);
@@ -123,7 +123,7 @@ public class TiDBRowDataInputFormat extends RichInputFormat<RowData, InputSplit>
 
   @Override
   public void openInputFormat() throws IOException {
-    clientSession = new ClientSession(new ClientConfig(properties));
+    clientSession = ClientSession.create(new ClientConfig(properties), true);
   }
 
   @Override

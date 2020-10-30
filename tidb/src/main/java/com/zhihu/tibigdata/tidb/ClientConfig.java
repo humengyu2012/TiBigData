@@ -42,6 +42,10 @@ public final class ClientConfig {
   public static final String MIN_IDLE_SIZE = "tidb.minimum.idle.size";
   public static final int MIN_IDLE_SIZE_DEFAULT = 10;
 
+  // for properties
+  public static final String TIDB_WRITE_MODE = "tidb.write_mode";
+  public static final String TIDB_WRITE_MODE_DEFAULT = "append";
+
   private String pdAddresses;
 
   private String databaseUrl;
@@ -54,21 +58,25 @@ public final class ClientConfig {
 
   private int minimumIdleSize;
 
+  private String writeMode;
+
   public ClientConfig() {
-    this(null, null, null, MAX_POOL_SIZE_DEFAULT, MIN_IDLE_SIZE_DEFAULT);
+    this(null, null, null, MAX_POOL_SIZE_DEFAULT, MIN_IDLE_SIZE_DEFAULT, TIDB_WRITE_MODE_DEFAULT);
   }
 
   public ClientConfig(String databaseUrl, String username, String password) {
-    this(databaseUrl, username, password, MAX_POOL_SIZE_DEFAULT, MIN_IDLE_SIZE_DEFAULT);
+    this(databaseUrl, username, password, MAX_POOL_SIZE_DEFAULT, MIN_IDLE_SIZE_DEFAULT,
+        TIDB_WRITE_MODE_DEFAULT);
   }
 
   public ClientConfig(String databaseUrl, String username, String password, int maximumPoolSize,
-      int minimumIdleSize) {
+      int minimumIdleSize, String writeMode) {
     this.databaseUrl = databaseUrl;
     this.username = username;
     this.password = password;
     this.maximumPoolSize = maximumPoolSize;
     this.minimumIdleSize = minimumIdleSize;
+    this.writeMode = writeMode;
   }
 
   public ClientConfig(Map<String, String> properties) {
@@ -78,7 +86,18 @@ public final class ClientConfig {
         Integer.parseInt(
             properties.getOrDefault(MAX_POOL_SIZE, Integer.toString(MAX_POOL_SIZE_DEFAULT))),
         Integer.parseInt(
-            properties.getOrDefault(MIN_IDLE_SIZE, Integer.toString(MIN_IDLE_SIZE_DEFAULT))));
+            properties.getOrDefault(MIN_IDLE_SIZE, Integer.toString(MIN_IDLE_SIZE_DEFAULT))),
+        properties.getOrDefault(TIDB_WRITE_MODE, TIDB_WRITE_MODE_DEFAULT)
+    );
+  }
+
+  public ClientConfig(ClientConfig config) {
+    this(config.getDatabaseUrl(),
+        config.getUsername(),
+        config.getPassword(),
+        config.getMaximumPoolSize(),
+        config.getMinimumIdleSize(),
+        config.getWriteMode());
   }
 
   public String getPdAddresses() {
@@ -127,6 +146,14 @@ public final class ClientConfig {
 
   public void setMinimumIdleSize(int minimumIdleSize) {
     this.minimumIdleSize = minimumIdleSize;
+  }
+
+  public String getWriteMode() {
+    return writeMode;
+  }
+
+  public void setWriteMode(String writeMode) {
+    this.writeMode = writeMode;
   }
 
   public String getDriverName() {

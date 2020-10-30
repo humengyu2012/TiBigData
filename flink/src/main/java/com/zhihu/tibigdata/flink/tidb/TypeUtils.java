@@ -42,7 +42,7 @@ public class TypeUtils {
    * @param dataType TiKV DataType
    * @return Flink DataType
    */
-  public static DataType getFlinkType(com.pingcap.tikv.types.DataType dataType) {
+  public static DataType getFlinkType(org.tikv.common.types.DataType dataType) {
     switch (dataType.getType()) {
       case TypeTiny:
       case TypeBit:
@@ -78,12 +78,12 @@ public class TypeUtils {
       case TypeVarString:
       case TypeString:
       case TypeVarchar:
+      case TypeSet:
         return DataTypes.STRING();
       case TypeDecimal:
       case TypeNewDecimal:
         return DataTypes.DECIMAL((int) dataType.getLength(), dataType.getDecimal());
       case TypeGeometry:
-      case TypeSet:
       default:
         throw new IllegalArgumentException(
             format("can not get flink datatype by tikv type: %s", dataType));
@@ -146,7 +146,7 @@ public class TypeUtils {
             object = Timestamp.valueOf(timeString).toLocalDateTime();
           }
         } else if (object instanceof Long) {
-          object = new Timestamp((Long) object).toLocalDateTime();
+          object = new Timestamp(((Long) object) / 1000).toLocalDateTime();
         }
         break;
       case "LocalTime":
